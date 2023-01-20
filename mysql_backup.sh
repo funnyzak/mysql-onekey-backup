@@ -4,7 +4,7 @@
 #   System Required: CentOS 7+、Ubuntu、Bash 3.6+
 #   Description: A shell script to backup mysql database and send message with pushoo.
 #   Author: silenceace@gmail.com (Leon)
-#   Repo: https://github.com/funnyzak/mysql-onkey-backup
+#   Repo: https://github.com/funnyzak/mysql-onekey-backup
 #   License: MIT
 #========================================================
 
