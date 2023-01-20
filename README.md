@@ -1,10 +1,10 @@
 # MySQL OneKey Backup
 
 [![GitHub license](https://img.shields.io/github/license/funnyzak/mysql-onekey-backup)](http://www.apache.org/licenses/LICENSE-2.0)
-[![GitHub stars](https://img.shields.io/github/stars/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onkey-backup)
-[![GitHub issues](https://img.shields.io/github/issues/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onkey-backup)
-[![GitHub forks](https://img.shields.io/github/forks/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onkey-backup)
-[![Github Release](https://img.shields.io/github/release/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onkey-backup)
+[![GitHub stars](https://img.shields.io/github/stars/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onekey-backup/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onekey-backup/issues)
+[![GitHub forks](https://img.shields.io/github/forks/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onekey-backup/network/members)
+[![Github Release](https://img.shields.io/github/release/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onekey-backup/releases)
 
 A shell script to backup mysql database and send message with pushoo.
 
@@ -40,7 +40,7 @@ bash /path/to/mysql_backup.sh do_install_nodejs
 
 Attention: `You need config pushoo-cli before use it.`
 
-## Variables
+## Arguments
 
 The script has 10 variables, you can set them in the script or pass them as arguments. following is the description of each variable.
 
@@ -73,7 +73,7 @@ bash /path/to/mysql_backup.sh "/mnt/back/db_backups" "127.0.0.1" "root" "example
 bash /path/to/mysql_backup.sh "/mnt/back/db_backups" "127.0.0.1" "root" "examplepassword" "db1 db2" >> /var/log/db_backup.log 2>&1
 ```
 
-## Cron
+## CronTab
 
 You can use crontab to schedule the script to run periodically. For example, you can run the script every day at 3:00 AM.
 
