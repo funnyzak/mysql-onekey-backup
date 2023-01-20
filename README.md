@@ -1,10 +1,10 @@
 # MySQL OneKey Backup
 
-[![GitHub license](https://img.shields.io/github/license/funnyzak/mysql-backup)](http://www.apache.org/licenses/LICENSE-2.0)
-[![GitHub stars](https://img.shields.io/github/stars/funnyzak/mysql-backup)](https://github.com/funnyzak/mysql-onkey-backup)
-[![GitHub issues](https://img.shields.io/github/issues/funnyzak/mysql-backup)](https://github.com/funnyzak/mysql-onkey-backup)
-[![GitHub forks](https://img.shields.io/github/forks/funnyzak/mysql-backup)](https://github.com/funnyzak/mysql-onkey-backup)
-[![Github Release](https://img.shields.io/github/release/funnyzak/mysql-backup)](https://github.com/funnyzak/mysql-onkey-backup)
+[![GitHub license](https://img.shields.io/github/license/funnyzak/mysql-onekey-backup)](http://www.apache.org/licenses/LICENSE-2.0)
+[![GitHub stars](https://img.shields.io/github/stars/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onkey-backup)
+[![GitHub issues](https://img.shields.io/github/issues/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onkey-backup)
+[![GitHub forks](https://img.shields.io/github/forks/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onkey-backup)
+[![Github Release](https://img.shields.io/github/release/funnyzak/mysql-onekey-backup)](https://github.com/funnyzak/mysql-onkey-backup)
 
 A shell script to backup mysql database and send message with pushoo.
 
@@ -29,10 +29,10 @@ You can install them with the following command.
 
 ```bash
 # install mysqldump
-bath /path/to/mysql_backup.sh do_install_mysql_client
+bash /path/to/mysql_backup.sh do_install_mysql_client
 
 # install pushoo-cli
-bath /path/to/mysql_backup.sh do_install_pushoo_cli
+bash /path/to/mysql_backup.sh do_install_pushoo_cli
 
 # install nodejs 16
 bash /path/to/mysql_backup.sh do_install_nodejs
@@ -91,8 +91,8 @@ You can use crontab to schedule the script to run periodically. For example, you
 
 If you have any questions or suggestions, please feel free to submit an issue or pull request.
 
-<a href="https://github.com/funnyzak/vue-starter/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=funnyzak/vue-starter" />
+<a href="https://github.com/funnyzak/mysql-onekey-backup/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=funnyzak/mysql-onekey-backup" />
 </a>
 
 ## License
