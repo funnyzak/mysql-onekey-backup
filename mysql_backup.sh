@@ -29,7 +29,7 @@ TZ=UTC-8
 
 # ======================== Configurations ========================
 # The server name, used for pushoo message.
-SERVER_NAME="Demo Server Scheduled"
+SERVER_NAME="Demo Server"
 # The target directory for the dump files.
 DB_DUMP_TARGET_DIR_PATH="/path/to/db_backups"
 # The temporary directory for the dump files.
@@ -101,7 +101,7 @@ log() {
   echo -e "$(date '+%Y-%m-%d %H:%M:%S') [${log_level}] $1 ${plain}"
 
   if [ "$push_message" = "true" ]; then
-    pushoo -T "$SERVER_NAME" -C "Log Level: ${log_level}, Message: $1" >/dev/null 2>&1
+    pushoo -C "$SERVER_NAME MySQL Backup $SCRIPT_VERSION, Backup Database: $DB_NAMES On $DB_HOST:$DB_PORT To $DB_DUMP_TARGET_DIR_PATH, Message: $1"
   fi
 }
 
