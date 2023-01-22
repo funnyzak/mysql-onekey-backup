@@ -81,6 +81,10 @@ You can use crontab to schedule the script to run periodically. For example, you
 0 3 * * * /path/to/mysql_backup.sh "/mnt/back/db_backups" "127.0.0.1" "root" "examplepassword" "db1 db2" >> /var/log/db_backup.log 2>&1
 ```
 
+## Docker
+
+You can use docker image, [funnyzak/apline-cron](https://github.com/funnyzak/alpine-cron-docker) to schedule the script to run periodically.
+
 ## Reference
 
 - [MySQL Command Line Client Installation Instructions](https://dev.mysql.com/doc/refman/8.0/en/mysql-installation.html)
