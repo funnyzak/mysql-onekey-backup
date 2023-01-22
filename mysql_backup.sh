@@ -11,22 +11,18 @@
 # system requirements: mariadb-client, node, pushoo-cli. If not installed, the script will prompt you to install.
 
 # usage: bash /path/to/mysql_backup.sh "dump_target_dir" "db_host" "db_user" "db_password" "db_names" db_port "dump_opts" expire_hours "before_dump_command" "after_dump_command"
-# example: bash /path/to/mysql_backup.sh "/mnt/back/db_backups" "127.0.0.1" "root" "examplepassword" "db1 db2" 3306 "--column-statistics=0 --ssl-mode=DISABLED --single-transaction --quick" 4320
-# example: bash /path/to/mysql_backup.sh "/mnt/back/db_backups" "127.0.0.1" "root" "examplepassword" "db1 db2"
-# example: bash /path/to/mysql_backup.sh "/mnt/back/db_backups" "127.0.0.1" "root" "examplepassword" "db1 db2" >> /var/log/db_backup.log 2>&1
+# example: bash /path/to/mysql_backup.sh "/path/to/db_backups" "127.0.0.1" "root" "examplepassword" "db1 db2" 3306 "--single-transaction --quick --lock-tables=false" 4320
+# example: bash /path/to/mysql_backup.sh "/path/to/db_backups" "127.0.0.1" "root" "examplepassword" "db1 db2"
+# example: bash /path/to/mysql_backup.sh "/path/to/db_backups" "127.0.0.1" "root" "examplepassword" "db1 db2" >> /var/log/db_backup.log 2>&1
 
 # You can use crontab to schedule the script to run periodically.
-# example: 0 0 * * * /path/to/mysql_backup.sh "/mnt/back/db_backups" "dump_target_dir" "db_host" "db_user" "db_password" "db_names" db_port "dump_opts" expire_hours >> /var/log/db_backup.log 2>&1
+# example: 0 0 * * * /path/to/mysql_backup.sh "/path/to/db_backups" "dump_target_dir" "db_host" "db_user" "db_password" "db_names" db_port "dump_opts" expire_hours >> /var/log/db_backup.log 2>&1
 
 # mariadb-client: https://mariadb.com/kb/en/mariadb/mariadb-package-repository-setup-and-usage/
 # node: https://nodejs.org/en/download/package-manager/
 # pushoo-cli: https://www.npmjs.com/package/pushoo-cli
 
-SCRIPT_VERSION="v0.0.1"
-red='\033[0;31m'
-green='\033[0;32m'
-yellow='\033[0;33m'
-plain='\033[0m'
+SCRIPT_VERSION="v0.0.2"
 
 export PATH=$PATH:/usr/local/bin
 TZ=UTC-8
@@ -35,15 +31,15 @@ TZ=UTC-8
 # The server name, used for pushoo message.
 SERVER_NAME="Demo Server Scheduled"
 # The target directory for the dump files.
-DB_DUMP_TARGET_DIR_PATH="/mnt/back/db_backups"
+DB_DUMP_TARGET_DIR_PATH="/path/to/db_backups"
 # The temporary directory for the dump files.
 TMP_DIR_PATH="/tmp/backups"
 
 # Whether to use separate files for each schema in the compressed file (true), if so, you need to set DB_NAMES. Or single dump file (FALSE).
 DB_DUMP_BY_SCHEMA="true"
 # The options for mysqldump command.
-# Example: DUMP_OPTS="--column-statistics=0 --ssl-mode=DISABLED --single-transaction --quick"
-DUMP_OPTS="--column-statistics=0 --ssl-mode=DISABLED --single-transaction --quick"
+# Example: DUMP_OPTS="--single-transaction --quick --lock-tables=false"
+DUMP_OPTS="--single-transaction --quick --lock-tables=false"
 # Dump file name extension, default "sql".
 DB_FILE_EXTENSION="sql"
 # If COMPRESS_EXTENSION is not empty, compress the dump db files.
@@ -65,6 +61,18 @@ BEFORE_DUMP_COMMAND=
 AFTER_DUMP_COMMAND=
 # ======================== Configurations ========================
 
+# ======================== Color ========================
+# if you don't want to see the color, please comment out the following line
+# red='\033[0;31m'
+# green='\033[0;32m'
+# yellow='\033[0;33m'
+# plain='\033[0m'
+
+red=''
+green=''
+yellow=''
+plain=''
+# ======================== Color ========================
 
 # get current shell file path
 SHELL_PATH=$(cd "$(dirname "$0")";pwd)/$(basename "$0")
@@ -130,15 +138,17 @@ do_install_pushoo_cli() {
 prepare() {
   log "Check config and prepare environment..."
 
+  # check and install zip
+  if ! command -v zip &> /dev/null; then
+    log "zip command not found, please install it first. you can run the following command to install it: ${green}apt-get install -y zip${plain} or ${green}yum install -y zip${plain}" "error"
+    exit 1
+  fi
+
   command -v systemctl >/dev/null 2>&1
   if [[ $? != 0 ]]; then
     log "systemctl command not found, please check if the system is a systemd system." "error" "true"
     exit 1
   fi
-
-  # create tmp dir and target dir
-  mkdir -p $TMP_DIR_PATH
-  mkdir -p $DB_DUMP_TARGET_DIR_PATH
 
   # check and install mysqldump
   if ! command -v mysqldump &> /dev/null; then
@@ -162,6 +172,11 @@ prepare() {
   if ! pushoo >/dev/null 2>&1; then
     log "pushoo not configured, please configure it first. you can run the following command to configure it: ${green}pushoo config${plain}" "error"
     exit 1
+  fi
+
+  # args count check
+  if [ $# -lt 5 ]; then
+    log "args count error, please check the args count. the args count at least is 5, but the actual args count is $#" "error"
   fi
 
   # delete temp files
@@ -224,6 +239,10 @@ prepare() {
     exit 1
   fi
 
+  # create tmp dir and target dir
+  mkdir -p $TMP_DIR_PATH
+  mkdir -p $DB_DUMP_TARGET_DIR_PATH
+
   log "Check config and prepare environment done."
 }
 
@@ -257,7 +276,13 @@ do_dump() {
     mkdir -p $COMPESS_FILE_PATH
 
     log "\n${green}compress db sql files:\n${DUMPED_DB_FILES}"
-    zip $TMP_DIR_PATH/${DUMPED_COMPRESS_FILE_NAME} ./*.${DB_FILE_EXTENSION} >> /dev/null 2>&1 && (mv $TMP_DIR_PATH/${DUMPED_COMPRESS_FILE_NAME} $COMPESS_FILE_PATH/${DUMPED_COMPRESS_FILE_NAME})
+    zip $TMP_DIR_PATH/${DUMPED_COMPRESS_FILE_NAME} ./*.${DB_FILE_EXTENSION} >/dev/null 2>tmp_error_log
+    if [ $? -ne 0 ]; then
+      log "compress db sql files failed. error message: $(cat tmp_error_log)" "error"
+    else
+      mv $TMP_DIR_PATH/${DUMPED_COMPRESS_FILE_NAME} $COMPESS_FILE_PATH/${DUMPED_COMPRESS_FILE_NAME}
+      log "compress db sql files done. ${green}compress file path: ${COMPESS_FILE_PATH}/${DUMPED_COMPRESS_FILE_NAME}${plain}\n"
+    fi
   fi
 
   mkdir -p $DB_DUMP_TARGET_DIR_PATH/sql
@@ -271,8 +296,9 @@ db_back() {
   DUMP_NAME_TAIL=dbback_$NOW_TIME
   EXPIRE_MINUTE=`expr $EXPIRE_HOURS \* 60`
 
-  DB_HOST_CUT=$(echo $DB_HOST | cut -c 1-3)$(echo $DB_HOST | cut -c 4- | sed 's/./\*/g')
-  DB_PASSWORD_CUT=$(echo $DB_PASSWORD | cut -c 1-3)$(echo $DB_PASSWORD | cut -c 4- | sed 's/./\*/g')
+  DB_HOST_CUT=$(echo $DB_HOST | cut -c 1-5)$(echo $DB_HOST | cut -c 6- | sed 's/./\*/g')
+  DB_PASSWORD_CUT=$(echo $DB_PASSWORD | cut -c 1-5)$(echo $DB_PASSWORD | cut -c 6- | sed 's/./\*/g')
+
 
   log "\n${green}BackUP Configurations:\nExpire Hours: ${EXPIRE_HOURS}\nDump Name Tail: ${DUMP_NAME_TAIL}\nCompress File Extension: ${COMPRESS_EXTENSION}\nDB Dump By Schema: ${DB_DUMP_BY_SCHEMA}\nDump Opts: ${DUMP_OPTS}\nDB File Extension: ${DB_FILE_EXTENSION}\nDB Dump Target Dir Path: ${DB_DUMP_TARGET_DIR_PATH}\nBefore Dump Command: ${BEFORE_DUMP_COMMAND}\nAfter Dump Command: ${AFTER_DUMP_COMMAND}\n\nDB Connection Configurations:\nDB Host: ${DB_HOST_CUT}\nDB Port: ${DB_PORT}\nDB User: ${DB_USER}\nDB Password: ${DB_PASSWORD_CUT}\nDB Names: ${DB_NAMES}${plain}"
 
