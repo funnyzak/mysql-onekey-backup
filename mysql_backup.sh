@@ -22,7 +22,7 @@
 # node: https://nodejs.org/en/download/package-manager/
 # pushoo-cli: https://www.npmjs.com/package/pushoo-cli
 
-SCRIPT_VERSION="v0.0.2"
+SCRIPT_VERSION="v0.0.3"
 
 export PATH=$PATH:/usr/local/bin
 TZ=UTC-8
