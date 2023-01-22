@@ -158,6 +158,12 @@ prepare() {
     exit 1
   fi
 
+  # check pushoo if configured
+  if ! pushoo >/dev/null 2>&1; then
+    log "pushoo not configured, please configure it first. you can run the following command to configure it: ${green}pushoo config${plain}" "error"
+    exit 1
+  fi
+
   # delete temp files
   rm -rf ${TMP_DIR_PATH}/*
 
@@ -268,7 +274,7 @@ db_back() {
   DB_HOST_CUT=$(echo $DB_HOST | cut -c 1-3)$(echo $DB_HOST | cut -c 4- | sed 's/./\*/g')
   DB_PASSWORD_CUT=$(echo $DB_PASSWORD | cut -c 1-3)$(echo $DB_PASSWORD | cut -c 4- | sed 's/./\*/g')
 
-  log "\n${green}BackUP Configurations:\nExpire Hours: ${EXPIRE_HOURS}\nDump Name Tail: ${DUMP_NAME_TAIL}\nCompress File Extension: ${COMPRESS_EXTENSION}\nDB Dump By Schema: ${DB_DUMP_BY_SCHEMA}\nDump Opts: ${DUMP_OPTS}\nDB File Extension: ${DB_FILE_EXTENSION}\nDB Dump Target Dir Path: ${DB_DUMP_TARGET_DIR_PATH}\n\nDB Connection Configurations:\nDB Host: ${DB_HOST_CUT}\nDB Port: ${DB_PORT}\nDB User: ${DB_USER}\nDB Password: ${DB_PASSWORD_CUT}\nDB Names: ${DB_NAMES}${plain}"
+  log "\n${green}BackUP Configurations:\nExpire Hours: ${EXPIRE_HOURS}\nDump Name Tail: ${DUMP_NAME_TAIL}\nCompress File Extension: ${COMPRESS_EXTENSION}\nDB Dump By Schema: ${DB_DUMP_BY_SCHEMA}\nDump Opts: ${DUMP_OPTS}\nDB File Extension: ${DB_FILE_EXTENSION}\nDB Dump Target Dir Path: ${DB_DUMP_TARGET_DIR_PATH}\nBefore Dump Command: ${BEFORE_DUMP_COMMAND}\nAfter Dump Command: ${AFTER_DUMP_COMMAND}\n\nDB Connection Configurations:\nDB Host: ${DB_HOST_CUT}\nDB Port: ${DB_PORT}\nDB User: ${DB_USER}\nDB Password: ${DB_PASSWORD_CUT}\nDB Names: ${DB_NAMES}${plain}"
 
   if [ -n "$BEFORE_DUMP_COMMAND" ]; then
       log "execute before dump command: ${BEFORE_DUMP_COMMAND}"
@@ -302,8 +308,10 @@ db_back() {
 log "Script Version: $SCRIPT_VERSION"
 
 if [ -n "$1" -a "${1:0:3}" = "do_" ]; then
+  # if the first parameter is start with "do_", then execute the function
   $1
 else
-  prepare $1 $2 $3 $4 "$5" $6 "$7" $8 "$9" "$10"
+  # pass all parameters to prepare function, the parameters will be used in prepare function
+  prepare "${1}" "${2}" "${3}" "${4}" "${5}" ${6} "${7}" ${8} "${9}" "${10}"
   db_back
 fi
