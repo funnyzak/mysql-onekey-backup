@@ -111,8 +111,17 @@ do_install_mysql_client() {
     # install mysql-client on centos
     yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm >> /dev/null 2>&1
     yum install -y mysql-community-client --nogpgcheck >> /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      log "install mysql-community-client failed, try to install mariadb-client..." "warn"
+      yum install -y mariadb-client >> /dev/null 2>&1
+    fi
   else
+    # install and check
     apt-get install -y mariadb-client >> /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      log "install mariadb-client failed, try to install mysql-client..." "warn"
+      apt-get install -y mysql-client >> /dev/null 2>&1
+    fi
   fi
   log "install mysql-client done."
 }
