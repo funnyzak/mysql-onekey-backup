@@ -325,8 +325,8 @@ db_back() {
 
   log "remove expired files.."
   # print and remove expired files
-  find $DB_DUMP_TARGET_DIR_PATH -maxdepth 2 -name "*.${COMPRESS_EXTENSION}" -type f -mmin +$EXPIRE_MINUTE -exec log {} \; -exec rm -f {} \;
-  find $DB_DUMP_TARGET_DIR_PATH -maxdepth 2 -name "*.${DB_FILE_EXTENSION}" -type f -mmin +$EXPIRE_MINUTE -exec log {} \; -exec rm -f {} \;
+  find $DB_DUMP_TARGET_DIR_PATH -maxdepth 2 -name "*.${COMPRESS_EXTENSION}" -type f -mmin +$EXPIRE_MINUTE -exec echo {} \; -exec rm -f {} \;
+  find $DB_DUMP_TARGET_DIR_PATH -maxdepth 2 -name "*.${DB_FILE_EXTENSION}" -type f -mmin +$EXPIRE_MINUTE -exec echo {} \; -exec rm -f {} \;
   log "remove expired files done."
 
   if [ -n "$AFTER_DUMP_COMMAND" ]; then
