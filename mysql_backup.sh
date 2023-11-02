@@ -226,7 +226,7 @@ prepare() {
   if [ -n "$7" ]; then
     DUMP_OPTS=$7
   fi
-  
+
   # if $8 is not empty, use it as the expire hours
   if [ -n "$8" ]; then
     EXPIRE_HOURS=$8
@@ -290,6 +290,7 @@ do_dump() {
       log "compress db sql files failed. error message: $(cat tmp_error_log)" "error"
     else
       mv $TMP_DIR_PATH/${DUMPED_COMPRESS_FILE_NAME} $COMPESS_FILE_PATH/${DUMPED_COMPRESS_FILE_NAME}
+      echo -e "Backup DB List: \n$(ls -lh *.${DB_FILE_EXTENSION})" > $COMPESS_FILE_PATH/${DUMPED_COMPRESS_FILE_NAME}.txt
       log "compress db sql files done. ${green}compress file path: ${COMPESS_FILE_PATH}/${DUMPED_COMPRESS_FILE_NAME}${plain}\n"
     fi
   fi
