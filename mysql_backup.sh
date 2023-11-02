@@ -22,14 +22,14 @@
 # node: https://nodejs.org/en/download/package-manager/
 # pushoo-cli: https://www.npmjs.com/package/pushoo-cli
 
-SCRIPT_VERSION="v0.0.3"
+SCRIPT_VERSION="v0.0.5"
 
 export PATH=$PATH:/usr/local/bin
 TZ=UTC-8
 
 # ======================== Configurations ========================
 # The server name, used for pushoo message.
-SERVER_NAME="Demo Server"
+SERVER_NAME=$(hostname)
 # The target directory for the dump files.
 DB_DUMP_TARGET_DIR_PATH="/path/to/db_backups"
 # The temporary directory for the dump files.
@@ -155,7 +155,7 @@ prepare() {
       DUMP_OPTS="$DUMP_OPTS --compatible=mysql"
     fi
   fi
-  
+
   # check and install zip
   if ! command -v zip &> /dev/null; then
     log "zip command not found, please install it first. you can run the following command to install it: ${green}apt-get install -y zip${plain} or ${green}yum install -y zip${plain}" "error"
