@@ -147,15 +147,6 @@ do_install_pushoo_cli() {
 prepare() {
   log "Check config and prepare environment..."
 
-  # check if  DUMP_OPTS not set "-–compatible=", if not set, set it -–compatible=mysql
-  if [[ -z "$DUMP_OPTS" ]]; then
-    DUMP_OPTS="--compatible=mysql"
-  else
-    if [[ "$DUMP_OPTS" != *"--compatible="* ]]; then
-      DUMP_OPTS="$DUMP_OPTS --compatible=mysql"
-    fi
-  fi
-
   # check and install zip
   if ! command -v zip &> /dev/null; then
     log "zip command not found, please install it first. you can run the following command to install it: ${green}apt-get install -y zip${plain} or ${green}yum install -y zip${plain}" "error"
@@ -231,11 +222,11 @@ prepare() {
     DB_PORT=$6
   fi
 
-  # if $7 is not empty, use it as the dump options
+  # if $7 is not empty, use it as the dump opts
   if [ -n "$7" ]; then
     DUMP_OPTS=$7
   fi
-
+  
   # if $8 is not empty, use it as the expire hours
   if [ -n "$8" ]; then
     EXPIRE_HOURS=$8
